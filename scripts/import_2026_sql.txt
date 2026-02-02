@@ -1,0 +1,125 @@
+-- Import Script voor OPA 2026
+-- Run dit in de Supabase SQL Editor
+
+DO $$
+DECLARE
+  v_schedule_id uuid;
+  v_date_ids uuid[];
+  v_vol_id uuid;
+BEGIN
+  -- 1. Maak Rooster
+  INSERT INTO public.schedules (name, year, is_active)
+  VALUES ('Oud Papier 2026', 2026, true)
+  RETURNING id INTO v_schedule_id;
+
+  -- 2. Maak Data (en sla IDs op in array voor indexering)
+  -- Data: 10 jan, 7 feb, 7 mar, 4 apr, 2 may, 30 may, 27 jun, 29 aug, 19 sep, 17 oct, 14 nov, 12 dec
+  
+  -- We voeren ze één voor één in om de volgorde te garanderen voor de array indexering hieronder
+  WITH ins_dates AS (
+    INSERT INTO public.schedule_dates (schedule_id, date) VALUES 
+    (v_schedule_id, '2026-01-10'),
+    (v_schedule_id, '2026-02-07'),
+    (v_schedule_id, '2026-03-07'),
+    (v_schedule_id, '2026-04-04'),
+    (v_schedule_id, '2026-05-02'),
+    (v_schedule_id, '2026-05-30'),
+    (v_schedule_id, '2026-06-27'),
+    (v_schedule_id, '2026-08-29'),
+    (v_schedule_id, '2026-09-19'),
+    (v_schedule_id, '2026-10-17'),
+    (v_schedule_id, '2026-11-14'),
+    (v_schedule_id, '2026-12-12')
+    RETURNING id
+  )
+  SELECT array_agg(id) INTO v_date_ids FROM ins_dates;
+  
+  -- Function to get/create volunteer and assign
+  -- We doen dit semi-handmatig hieronder per regel uit de sheet
+  
+  -- === Fam. Geertsma ===
+  -- Check/Insert Volunteer
+  INSERT INTO public.volunteers (name, email, notes) VALUES ('Fam. Geertsma', 'jaspergeertsma@gmail.com', 'Tel: 06-30400746')
+  ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name RETURNING id INTO v_vol_id; -- (Email uniek maken in schema zou handig zijn)
+  -- Als email constraint ontbreekt, kan dit dubbele maken. We nemen aan van niet of gebruiken een SELECT truuk.
+  -- Eerstvolgende fix: we gebruiken een inline functie/CTE voor volunteer lookup.
+  
+  -- Assignments (Index 1-based in SQL array access usually, but let's be safe via direct inserts per volunteer block)
+  -- Maar de array volgorde van hierboven is niet gegarandeerd zonder ORDER BY. 
+  -- Laten we veiligere aanpak kiezen: Hardcoded inserts, maar met looked-up IDs.
+  
+END $$;
+
+-- Omdat PL/pgSQL arrays lastig zijn met insert order guarantees, doen we het simpeler:
+-- Temporary table approach voor leesbaarheid.
+
+BEGIN;
+
+-- 1. Schedule
+INSERT INTO public.schedules (name, year, is_active) VALUES ('Oud Papier 2026', 2026, true);
+
+-- Helper om ID te pakken
+-- (We doen aanname dat er maar 1 schedule 2026 is nu)
+
+-- 2. Data toevoegen
+INSERT INTO public.schedule_dates (schedule_id, date)
+SELECT id, d
+FROM public.schedules, unnest(ARRAY['2026-01-10', '2026-02-07', '2026-03-07', '2026-04-04', '2026-05-02', '2026-05-30', '2026-06-27', '2026-08-29', '2026-09-19', '2026-10-17', '2026-11-14', '2026-12-12']::date[]) as d
+WHERE year = 2026 AND name = 'Oud Papier 2026';
+
+-- 3. Vrijwilligers Upsert (Email moet uniek zijn voor ON CONFLICT, indien niet, voeg constraint toe of check handmatig)
+-- Voor de zekerheid voegen we constraint toe als die er niet is (mag falen als ie er al is)
+ALTER TABLE public.volunteers ADD CONSTRAINT volunteers_email_key UNIQUE (email);
+
+INSERT INTO public.volunteers (name, email, notes) VALUES
+('Fam. Geertsma', 'jaspergeertsma@gmail.com', '06-30400746'),
+('Fam. Simon', 'marlsimon@live.nl', '06-53389559'),
+('Fam. Top', 'ericagrift@hotmail.com', '06-26336838'),
+('Fam. Kommer', 'alinebakker93@gmail.com', '06-13104506'),
+('Fam. Koopman', 'biavandenhazel@hotmail.com', '06-40464444'),
+('Fam. Brendeke', 'gesinebrendeke@gmail.com', '06-44360230'),
+('Fam. van de Ridder', 'hjvanderidder@gmail.com', '06-13751424'),
+('Fam. Hilbers', 'Fam.hilbers@gmail.com', '06-40035697'),
+('Fam. Brussee', 'jbrusseejr@hotmail.com', '06-11655304'),
+('Fam. Bos', 'cbos@ceesbos.nl', '06-53622692'),
+('Fam. Wassink', 'gewa3000@hotmail.com', '06-29572296'),
+('Fam. Doppenberg', 'w.doppenberg80@hetnet.nl', '06-10867863')
+ON CONFLICT (email) DO NOTHING;
+
+-- 4. Assignments
+-- Dit is een grote query. We matchen op datum en email.
+
+INSERT INTO public.assignments (schedule_date_id, volunteer_id, role)
+SELECT sd.id, v.id, x.role
+FROM (VALUES
+  ('jaspergeertsma@gmail.com', '2026-01-10', 'V1'), ('jaspergeertsma@gmail.com', '2026-02-07', 'L1'), ('jaspergeertsma@gmail.com', '2026-04-04', 'L1'), ('jaspergeertsma@gmail.com', '2026-05-30', 'L2'), ('jaspergeertsma@gmail.com', '2026-06-27', 'V2'), ('jaspergeertsma@gmail.com', '2026-08-29', 'R1'), ('jaspergeertsma@gmail.com', '2026-09-19', 'L1'), ('jaspergeertsma@gmail.com', '2026-10-17', 'L2'), ('jaspergeertsma@gmail.com', '2026-11-14', 'L2'), ('jaspergeertsma@gmail.com', '2026-12-12', 'V1'),
+  
+  ('marlsimon@live.nl', '2026-03-07', 'R1'), ('marlsimon@live.nl', '2026-05-02', 'L1'), ('marlsimon@live.nl', '2026-06-27', 'R1'), ('marlsimon@live.nl', '2026-09-19', 'L2'), ('marlsimon@live.nl', '2026-11-14', 'V2'),
+  
+  ('ericagrift@hotmail.com', '2026-01-10', 'R1'), ('ericagrift@hotmail.com', '2026-03-07', 'V1'), ('ericagrift@hotmail.com', '2026-05-30', 'R1'), ('ericagrift@hotmail.com', '2026-06-27', 'L1'), ('ericagrift@hotmail.com', '2026-08-29', 'L2'), ('ericagrift@hotmail.com', '2026-10-17', 'V2'), ('ericagrift@hotmail.com', '2026-12-12', 'R1'),
+
+  ('alinebakker93@gmail.com', '2026-02-07', 'L2'), ('alinebakker93@gmail.com', '2026-04-04', 'V1'), ('alinebakker93@gmail.com', '2026-05-02', 'R1'), ('alinebakker93@gmail.com', '2026-06-27', 'L1'), ('alinebakker93@gmail.com', '2026-09-19', 'V2'), ('alinebakker93@gmail.com', '2026-11-14', 'R1'),
+
+  ('biavandenhazel@hotmail.com', '2026-03-07', 'R1'), ('biavandenhazel@hotmail.com', '2026-05-02', 'V1'), ('biavandenhazel@hotmail.com', '2026-06-27', 'V1'), ('biavandenhazel@hotmail.com', '2026-08-29', 'V2'), ('biavandenhazel@hotmail.com', '2026-10-17', 'R1'), ('biavandenhazel@hotmail.com', '2026-12-12', 'L1'),
+
+  ('gesinebrendeke@gmail.com', '2026-01-10', 'L1'), ('gesinebrendeke@gmail.com', '2026-03-07', 'L2'), ('gesinebrendeke@gmail.com', '2026-04-04', 'R1'), ('gesinebrendeke@gmail.com', '2026-05-30', 'V1'), ('gesinebrendeke@gmail.com', '2026-09-19', 'R1'), ('gesinebrendeke@gmail.com', '2026-12-12', 'V2'),
+
+  ('hjvanderidder@gmail.com', '2026-02-07', 'R1'), ('hjvanderidder@gmail.com', '2026-03-07', 'L1'), ('hjvanderidder@gmail.com', '2026-05-30', 'V2'), ('hjvanderidder@gmail.com', '2026-08-29', 'R1'), ('hjvanderidder@gmail.com', '2026-10-17', 'V1'), ('hjvanderidder@gmail.com', '2026-12-12', 'L2'),
+
+  ('Fam.hilbers@gmail.com', '2026-01-10', 'L2'), ('Fam.hilbers@gmail.com', '2026-05-02', 'V2'), ('Fam.hilbers@gmail.com', '2026-06-27', 'R1'), ('Fam.hilbers@gmail.com', '2026-09-19', 'V1'), ('Fam.hilbers@gmail.com', '2026-11-14', 'L1'),
+
+  ('jbrusseejr@hotmail.com', '2026-01-10', 'R1'), ('jbrusseejr@hotmail.com', '2026-04-04', 'V2'), ('jbrusseejr@hotmail.com', '2026-05-30', 'R1'), ('jbrusseejr@hotmail.com', '2026-08-29', 'V1'), ('jbrusseejr@hotmail.com', '2026-10-17', 'L1'), ('jbrusseejr@hotmail.com', '2026-11-14', 'V1'),
+
+  ('cbos@ceesbos.nl', '2026-03-07', 'V2'), ('cbos@ceesbos.nl', '2026-05-30', 'R1'), ('cbos@ceesbos.nl', '2026-08-29', 'L1'), ('cbos@ceesbos.nl', '2026-09-19', 'R1'), ('cbos@ceesbos.nl', '2026-11-14', 'V1'),
+
+  ('gewa3000@hotmail.com', '2026-01-10', 'V2'), ('gewa3000@hotmail.com', '2026-05-02', 'L2'), ('gewa3000@hotmail.com', '2026-05-30', 'R1'), ('gewa3000@hotmail.com', '2026-06-27', 'V1'), ('gewa3000@hotmail.com', '2026-10-17', 'R1'), ('gewa3000@hotmail.com', '2026-12-12', 'R1'),
+
+  ('w.doppenberg80@hetnet.nl', '2026-02-07', 'V1'), ('w.doppenberg80@hetnet.nl', '2026-04-04', 'R1')
+
+) as x(email, date_str, role)
+JOIN public.volunteers v ON v.email = x.email
+JOIN public.schedule_dates sd ON sd.date = x.date_str::date
+JOIN public.schedules s ON sd.schedule_id = s.id
+WHERE s.year = 2026 AND s.name = 'Oud Papier 2026';
+
+COMMIT;

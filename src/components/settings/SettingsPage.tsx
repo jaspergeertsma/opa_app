@@ -158,6 +158,45 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
+                    <div className="card bg-white p-6 border-l-4 border-indigo-500">
+                        <h3 className="font-bold text-lg mb-4 text-indigo-900">Test Herinneringen</h3>
+                        <p className="text-sm text-slate-600 mb-4">
+                            Stuur handmatig de herinneringsmails voor een specifieke ophaaldatum.
+                            Gebruik dit om te testen of de templates goed werken.
+                            <br /><span className="font-bold text-red-500">LET OP: Dit stuurt échte e-mails naar de vrijwilligers!</span>
+                        </p>
+
+                        <div className="flex gap-4 items-end">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Selecteer Ophaaldatum</label>
+                                <input
+                                    type="date"
+                                    className="input-field"
+                                    id="testDate"
+                                />
+                            </div>
+                            <button
+                                onClick={async () => {
+                                    const dateEl = document.getElementById('testDate') as HTMLInputElement
+                                    if (!dateEl.value) return alert('Kies eerst een datum')
+
+                                    if (!confirm(`Weet je zeker dat je mails wilt sturen voor ${dateEl.value}?`)) return;
+
+                                    try {
+                                        const res = await fetch(`/.netlify/functions/scheduled-reminder?date=${dateEl.value}`)
+                                        const txt = await res.text()
+                                        alert('Resultaat: ' + txt)
+                                    } catch (err: any) {
+                                        alert('Fout tijdens versturen: ' + err.message)
+                                    }
+                                }}
+                                className="btn bg-indigo-600 hover:bg-indigo-700 text-white"
+                            >
+                                Verstuur Nu
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="flex gap-4">
                         <button
                             onClick={handleSave}
