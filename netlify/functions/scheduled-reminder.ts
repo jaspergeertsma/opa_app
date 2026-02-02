@@ -147,7 +147,9 @@ const reminderHandler: Handler = async (event, _context) => {
     console.log(`Sending to ${vol.email}...`)
 
     // Actual Send
-    const { id: msgId, error } = await sendReminderEmail(vol.email, subject, htmlBody, manualTriggerDate ? [] : ccs) // Don't CC admin on every single manual test mail
+    const sendResult = await sendReminderEmail(vol.email, subject, htmlBody, manualTriggerDate ? [] : ccs)
+    const msgId = sendResult.id
+    const error = sendResult.error
 
     // Log
     const status = error ? 'failed' : 'sent'
@@ -161,7 +163,8 @@ const reminderHandler: Handler = async (event, _context) => {
       subject,
       body_text: body,
       status,
-      error: error ? JSON.stringify(error) : null
+      error: error ? JSON.stringify(error) : null,
+      provider_message_id: msgId ? (typeof msgId === 'string' ? msgId : JSON.stringify(msgId)) : null
     })
   }
 
