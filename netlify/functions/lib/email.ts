@@ -1,9 +1,10 @@
 
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
-const resendApiKey = process.env.RESEND_API_KEY
-// Assuming a verified domain or use standard 'onboarding@resend.dev' for testing if not set
-export const resend = new Resend(resendApiKey)
+const smtpHost = process.env.SMTP_HOST
+const smtpPort = parseInt(process.env.SMTP_PORT || '465')
+const smtpUser = process.env.SMTP_USER
+const smtpPass = process.env.SMTP_PASS
 
 export const sendReminderEmail = async (
     to: string,
@@ -11,22 +12,36 @@ export const sendReminderEmail = async (
     html: string,
     cc: string[] = []
 ) => {
-    if (!resendApiKey) {
-        console.log('Mock Email:', { to, subject, cc })
-        return { id: 'mock', error: null }
+    // Fail-safe if env vars are missing
+    if (!smtpHost || !smtpUser || !smtpPass) {
+        console.log('⚠️ Mock Email (Missing SMTP Config):', { to, subject, cc })
+        console.log('Please configure SMTP_HOST, SMTP_USER, SMTP_PASS in Netlify.')
+        return { id: 'mock-missing-config', error: 'Missing SMTP Config' }
     }
 
     try {
-        const data = await resend.emails.send({
-            from: 'Oud Papier <planner@oudpapier.school>', // Update this with verified domain
+        const transporter = nodemailer.createTransport({
+            host: smtpHost,
+            port: smtpPort,
+            secure: smtpPort === 465, // true for 465, false for other ports
+            auth: {
+                user: smtpUser,
+                pass: smtpPass,
+            },
+        })
+
+        const info = await transporter.sendMail({
+            from: `"Oud Papier Planner" <${smtpUser}>`, // Sender identity
             to,
             cc,
             subject,
             html,
         })
-        return { data, error: null }
+
+        console.log(`Email sent: ${info.messageId}`)
+        return { id: info.messageId, error: null }
     } catch (error) {
-        console.error('Email Error:', error)
-        return { data: null, error }
+        console.error('SMTP Email Error:', error)
+        return { id: null, error }
     }
 }
