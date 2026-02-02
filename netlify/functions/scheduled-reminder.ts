@@ -49,11 +49,15 @@ const reminderHandler: Handler = async (event, _context) => {
     if (settings.cc_email_1) ccs.push(settings.cc_email_1)
 
     // 3. Fetch Schedule & ALL Assignments for that day
+    // 3. Fetch Schedule & ALL Assignments for that day
+    // DEBUG: Check existence first
+    const { count } = await supabaseAdmin.from('schedule_dates').select('*', { count: 'exact', head: true }).eq('date', targetDateStr)
+    console.log(`DEBUG: Raw row count for ${targetDateStr}: ${count}`)
+
     const { data: dateRows, error: dError } = await supabaseAdmin
       .from('schedule_dates')
       .select(`
       *,
-      schedule:schedules!inner(is_active),
       assignments(
         role,
         volunteer:volunteers(id, name, email, notes)
