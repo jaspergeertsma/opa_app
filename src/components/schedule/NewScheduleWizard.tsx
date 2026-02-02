@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { Volunteer, Role } from '../../types'
+import { Volunteer } from '../../types'
 import { generateSchedule } from '../../lib/scheduler'
-import { ArrowRight, ArrowLeft, Check, Calendar as CalendarIcon, Users, Wand2 } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Calendar as CalendarIcon, Users, Wand2 } from 'lucide-react'
 
 export default function NewScheduleWizard() {
     const navigate = useNavigate()
@@ -22,8 +22,8 @@ export default function NewScheduleWizard() {
         // Load volunteers on mount
         supabase.from('volunteers').select('*').eq('active', true).then(({ data }) => {
             if (data) {
-                setAllVolunteers(data)
-                setSelectedVolunteers(new Set(data.map(v => v.id)))
+                setAllVolunteers(data as Volunteer[])
+                setSelectedVolunteers(new Set((data as Volunteer[]).map(v => v.id)))
             }
         })
 

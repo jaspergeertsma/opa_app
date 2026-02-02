@@ -1,11 +1,12 @@
 
+import type { Handler } from '@netlify/functions'
 import { schedule } from '@netlify/functions'
 import { supabaseAdmin } from './lib/supabase-admin'
 import { sendReminderEmail } from './lib/email'
 import { nextSaturday, startOfDay, format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
-const reminderHandler = async (event: any) => {
+const reminderHandler: Handler = async (_event, context) => {
   console.log('Running scheduled reminder check...')
 
   // 1. Determine "Next Saturday"

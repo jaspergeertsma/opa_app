@@ -2,8 +2,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { Schedule, ScheduleDate, Volunteer, Role, Assignment } from '../../types'
-import { AlertTriangle, Download, Save, ArrowLeft, CheckCircle } from 'lucide-react'
+import { Schedule, Volunteer, Role, Assignment } from '../../types'
+import { AlertTriangle, Download, Save as SaveIcon, ArrowLeft, CheckCircle, Trash2, UserPlus, X } from 'lucide-react'
 import Papa from 'papaparse'
 
 export default function ScheduleEditor() {

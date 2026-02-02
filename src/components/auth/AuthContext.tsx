@@ -21,18 +21,34 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null)
+    const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
             setSession(session)
+            setUser(session?.user ?? null)
             setLoading(false)
+
+            if (session?.user) {
+                const { data, error } = await supabase
+                    .from('app_settings')
+                    .select('*')
+                    .limit(1)
+
+                if (!error && data && data.length > 0) {
+                    // We could store settings in context if we wanted, 
+                    // but for now we just confirm we can access DB
+                }
+            }
         })
 
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
             setSession(session)
+            setUser(session?.user ?? null)
+            setLoading(false)
         })
 
         return () => subscription.unsubscribe()

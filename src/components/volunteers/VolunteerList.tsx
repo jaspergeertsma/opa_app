@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { Volunteer } from '../../types'
-import { Plus, Edit2, Trash2, Check, X, Eye } from 'lucide-react'
+import { Edit2, Trash2, Check, X, Eye } from 'lucide-react'
 
 export default function VolunteerList() {
     const [volunteers, setVolunteers] = useState<Volunteer[]>([])

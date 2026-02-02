@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, Calendar, Users, Settings, LogOut, Menu, X, Bell } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, Settings, LogOut, Menu } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation, Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
