@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { Schedule } from '../../types'
-import { Users, AlertCircle, CheckCircle } from 'lucide-react'
+import { Plus } from 'lucide-react'
 
 import PageHeader from '../common/PageHeader'
 

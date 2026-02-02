@@ -21,13 +21,11 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null)
-    const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         supabase.auth.getSession().then(async ({ data: { session } }) => {
             setSession(session)
-            setUser(session?.user ?? null)
             setLoading(false)
 
             if (session?.user) {
@@ -47,7 +45,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
             setSession(session)
-            setUser(session?.user ?? null)
             setLoading(false)
         })
 

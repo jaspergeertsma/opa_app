@@ -2,8 +2,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { Schedule, Volunteer, Role, Assignment } from '../../types'
-import { AlertTriangle, Download, Save as SaveIcon, ArrowLeft, CheckCircle, Trash2, UserPlus, X } from 'lucide-react'
+import { Schedule, Volunteer, Role, Assignment, ScheduleDate } from '../../types'
+import { Download, ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react'
 import Papa from 'papaparse'
 
 export default function ScheduleEditor() {
@@ -46,9 +46,9 @@ export default function ScheduleEditor() {
 
     const handleAssignmentChange = async (assignmentId: string, volunteerId: string) => {
         // Optimistic Update
-        const newDates = dates.map(d => ({
+        const newDates = dates.map((d: ScheduleDate) => ({
             ...d,
-            assignments: d.assignments.map(a =>
+            assignments: d.assignments.map((a: Assignment) =>
                 a.id === assignmentId ? { ...a, volunteer_id: volunteerId } : a
             )
         }))
@@ -77,9 +77,9 @@ export default function ScheduleEditor() {
 
     const exportCSV = () => {
         if (!dates.length) return
-        const rows = dates.map(d => {
+        const rows = dates.map((d: ScheduleDate) => {
             const row: any = { Date: d.date }
-            d.assignments.forEach(a => {
+            d.assignments.forEach((a: Assignment) => {
                 const vol = volunteers.find(v => v.id === a.volunteer_id)
                 row[a.role] = vol ? vol.name : ''
             })
@@ -100,11 +100,11 @@ export default function ScheduleEditor() {
             s[v.id] = { total: 0, weight: 0, roles: { V1: 0, V2: 0, L1: 0, L2: 0, R1: 0, R2: 0 } }
         })
 
-        dates.forEach(d => {
-            d.assignments.forEach(a => {
+        dates.forEach((d: ScheduleDate) => {
+            d.assignments.forEach((a: Assignment) => {
                 if (a.volunteer_id && s[a.volunteer_id]) {
                     s[a.volunteer_id].total++
-                    s[a.volunteer_id].roles[a.role]++
+                    s[a.volunteer_id].roles[a.role as Role]++
                     s[a.volunteer_id].weight += (a.role.startsWith('R') ? 0.35 : 1.0)
                 }
             })

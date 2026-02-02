@@ -20,7 +20,7 @@ export default function NewScheduleWizard() {
 
     useEffect(() => {
         // Load volunteers on mount
-        supabase.from('volunteers').select('*').eq('active', true).then(({ data }) => {
+        supabase.from('volunteers').select('*').eq('active', true).then(({ data }: { data: any }) => {
             if (data) {
                 setAllVolunteers(data as Volunteer[])
                 setSelectedVolunteers(new Set((data as Volunteer[]).map(v => v.id)))

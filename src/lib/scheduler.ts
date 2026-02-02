@@ -1,4 +1,4 @@
-import { Volunteer, Schedule, Role } from '../types'
+import { Volunteer, Role } from '../types'
 
 export interface SchedulingResult {
     schedule_dates: {

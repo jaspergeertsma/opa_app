@@ -6,7 +6,7 @@ import { sendReminderEmail } from './lib/email'
 import { nextSaturday, startOfDay, format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
-const reminderHandler: Handler = async (_event, context) => {
+const reminderHandler: Handler = async (_event, _context) => {
   console.log('Running scheduled reminder check...')
 
   // 1. Determine "Next Saturday"
