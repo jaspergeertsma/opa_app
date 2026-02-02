@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import DashboardLayout from './DashboardLayout'
 import { BrowserRouter } from 'react-router-dom'
-import { AuthProvider } from '../auth/AuthContext'
 
 // Mock de AuthContext, anders redirect hij naar login
 vi.mock('../auth/AuthContext', () => ({
