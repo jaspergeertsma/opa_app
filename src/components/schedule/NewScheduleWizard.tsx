@@ -92,7 +92,7 @@ export default function NewScheduleWizard() {
 
             // 3. Generate using Engine (2-Phase)
             const validDates = dates.filter(d => d)
-            const result = generateSchedule(year, validDates, pool)
+            const result = generateSchedule(validDates, pool)
 
             // 4. Insert Dates
             // Map temp_id to real database IDs
