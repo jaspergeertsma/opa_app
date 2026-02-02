@@ -49,10 +49,18 @@ const reminderHandler: Handler = async (event, _context) => {
     if (settings.cc_email_1) ccs.push(settings.cc_email_1)
 
     // 3. Fetch Schedule & ALL Assignments for that day
+    // Debug: Check which DB we are hitting
+    const usedUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
+    console.log(`DEBUG: Connected to ${usedUrl?.substring(0, 15)}...`)
+
     // 3. Fetch Schedule & ALL Assignments for that day
-    // DEBUG: Check existence first
+    // DEBUG: List available dates to see what format they match
+    const { data: allDates } = await supabaseAdmin.from('schedule_dates').select('date').limit(5)
+    console.log('DEBUG: First 5 dates in DB:', JSON.stringify(allDates))
+
+    // DEBUG: Check existence specific date
     const { count } = await supabaseAdmin.from('schedule_dates').select('*', { count: 'exact', head: true }).eq('date', targetDateStr)
-    console.log(`DEBUG: Raw row count for ${targetDateStr}: ${count}`)
+    console.log(`DEBUG: Exact match count for ${targetDateStr}: ${count}`)
 
     const { data: dateRows, error: dError } = await supabaseAdmin
       .from('schedule_dates')
