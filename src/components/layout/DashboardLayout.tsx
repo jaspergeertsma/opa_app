@@ -3,6 +3,7 @@ import { LayoutDashboard, Calendar, Users, Settings, LogOut, Menu } from 'lucide
 import { useState } from 'react'
 import { Link, useLocation, Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import pkg from '../../../package.json'
 
 export default function DashboardLayout() {
     const { session, loading, signOut, user } = useAuth()
@@ -101,6 +102,10 @@ export default function DashboardLayout() {
                                 <LogOut size={18} />
                             </button>
                         </div>
+                    </div>
+                    {/* Version Footer */}
+                    <div className="px-6 pb-2 text-xs text-slate-500 text-center opacity-60">
+                        v{pkg.version}
                     </div>
                 </div>
             </aside>
