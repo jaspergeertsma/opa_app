@@ -144,10 +144,23 @@ const reminderHandler: Handler = async (event, _context) => {
 
     const htmlBody = body.replace(/\n/g, '<br/>')
 
-    console.log(`Sending to ${vol.email}...`)
+    // Determine recipient: Redirect to admin if testing (manual trigger)
+    const isTest = !!manualTriggerDate
+    const recipientEmail = isTest ? adminEmail : vol.email
+
+    let finalSubject = subject
+    let finalHtmlBody = htmlBody
+
+    if (isTest) {
+      finalSubject = `[TEST] ${subject}`
+      finalHtmlBody = `<p style="color: red; font-weight: bold;">⚠️ TEST MODUS: Dit bericht zou verzonden zijn naar ${vol.name} (${vol.email})</p><hr>${htmlBody}`
+    }
+
+    console.log(`Sending ${isTest ? 'TEST' : ''} to ${recipientEmail} (originally for ${vol.email})...`)
 
     // Actual Send
-    const sendResult = await sendReminderEmail(vol.email, subject, htmlBody, manualTriggerDate ? [] : ccs)
+    const sendResult = await sendReminderEmail(recipientEmail, finalSubject, finalHtmlBody, isTest ? [] : ccs)
+
     const msgId = sendResult.id
     const error = sendResult.error
 
