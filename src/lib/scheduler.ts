@@ -26,7 +26,6 @@ interface Candidate {
 }
 
 export function generateSchedule(
-    year: number,
     dates: string[],
     availableVolunteers: Volunteer[]
 ): SchedulingResult {
