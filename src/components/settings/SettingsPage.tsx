@@ -163,7 +163,7 @@ export default function SettingsPage() {
                         <p className="text-sm text-slate-600 mb-4">
                             Stuur handmatig de herinneringsmails voor een specifieke ophaaldatum.
                             Gebruik dit om te testen of de templates goed werken.
-                            <br /><span className="font-bold text-red-500">LET OP: Dit stuurt échte e-mails naar de vrijwilligers!</span>
+                            <br /><span className="font-bold text-green-600">✅ VEILIG: Test-mails worden alleen naar het admin-adres gestuurd.</span>
                         </p>
 
                         <div className="flex gap-4 items-end">
