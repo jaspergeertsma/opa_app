@@ -1,0 +1,52 @@
+# ---- Node / JS ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# ---- Build output ----
+dist/
+build/
+.out/
+.next/
+.vercel/
+.netlify/
+.vite/
+
+# ---- Local env / secrets ----
+.env
+.env.*
+!.env.example
+*.local
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ---- TypeScript ----
+*.tsbuildinfo
+
+# ---- Coverage / test artifacts ----
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# ---- Supabase local ----
+supabase/.branches/
+supabase/.temp/
+supabase/.cache/
+supabase/.env
+
+# ---- Functions tooling (optional, safe) ----
+# If you use netlify-cli locally, it creates local state
+.netlify/state.json
+
+# ---- Misc ----
+*.pem
+*.key
