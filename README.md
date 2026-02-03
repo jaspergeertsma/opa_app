@@ -85,6 +85,35 @@ The scheduler uses a multi-phase approach to ensure fairness:
 2. **Balancing**: Prioritizes volunteers with the *least* total shifts and *least* shifts in a specific role to ensure rotation.
 3. **Reserves**: Fills reserve spots (R1, R2) last, tracking a weighted load (reserves count for less "workload" than active shifts).
 
+## 🔄 Workflow & Development (Trunk-based Light)
+
+We volgen een **trunk-based light** methode om kwaliteit te waarborgen en releases beheerst uit te voeren.
+
+### Branching Model
+
+- **main**: Production / Release branch. Altijd stabiel en deploybaar. Alleen wijzigingen via Pull Requests (PR) vanuit `dev`.
+- **dev**: Integratie branch. Hier komt alle doorontwikkeling samen.
+- **feature/ naam**: Kortlevende branches voor nieuwe functionaliteit of fixes.
+
+### Dagelijkse Werkwijze
+
+1. **Nieuwe taak**: Maak een branch `feature/<onderwerp>` vanaf `dev`.
+2. **Commit**: Commit klein en logisch. Gebruik `[skip netlify]` in de commit message als een deploy niet nodig is.
+3. **PR**: Open een Pull Request naar `dev`.
+4. **Merge**: Na goedkeuring en checks, squash merge naar `dev`.
+5. **Release**: Merge `dev` naar `main` via een PR. Tag de release (vX.Y.Z) en update `CHANGELOG.md`.
+
+### Testing
+
+Wij hanteren strikte maar lichtgewicht quality gates.
+- **Smoke Tests**: Draai `npm run test:smoke` om te verifiëren dat de applicatie start en basiscomponenten aanwezig zijn.
+- **Manual Sanity Check**: Controleer handmatig of kritieke flows werken (inloggen, data laden).
+
+### Deployment
+
+- `main` wordt automatisch gedeployed naar productie.
+- Voorkom onnodige builds op Netlify door `[skip netlify]` toe te voegen aan commit messages die geen build triggeren (bijv. docs, tests).
+
 ## 📄 License
 
 This project is proprietary software custom-built for local community paper collection management.

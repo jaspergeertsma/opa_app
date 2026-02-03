@@ -8,7 +8,8 @@
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "test": "vitest"
+        "test": "vitest",
+        "test:smoke": "vitest run src/smoke.test.tsx"
     },
     "dependencies": {
         "@netlify/functions": "^2.4.0",
