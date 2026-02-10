@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { Volunteer, NotificationLog } from '../../types'
-import PageHeader from '../common/PageHeader'
-import { Mail, ArrowLeft, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+import { Mail, ArrowLeft, CheckCircle, XCircle, AlertTriangle, User, Calendar, FileText } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card'
+import { Badge } from '../ui/Badge'
+import { Button } from '../ui/Button'
+import clsx from 'clsx'
 
 export default function VolunteerDetail() {
     const { id } = useParams()
@@ -35,98 +38,115 @@ export default function VolunteerDetail() {
         setLoading(false)
     }
 
-    if (loading) return <div>Laden...</div>
+    if (loading) return (
+        <div className="flex items-center justify-center p-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary-end)]"></div>
+        </div>
+    )
     if (!volunteer) return <div>Vrijwilliger niet gevonden</div>
 
     return (
-        <div>
-            <div className="mb-4">
-                <Link to="/volunteers" className="text-slate-500 hover:text-slate-800 flex items-center gap-1 text-sm font-medium">
-                    <ArrowLeft size={16} /> Terug naar overzicht
+        <div className="space-y-6">
+            <div className="flex items-center gap-4">
+                <Link to="/volunteers" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors">
+                    <ArrowLeft size={24} />
                 </Link>
+                <div>
+                    <h1 className="text-3xl font-bold flex items-center gap-3">
+                        {volunteer.name}
+                        {volunteer.active ? <Badge variant="success">Actief</Badge> : <Badge variant="error">Inactief</Badge>}
+                    </h1>
+                    <p className="text-[var(--color-text-secondary)] text-sm flex items-center gap-2">
+                        <Mail size={14} /> {volunteer.email}
+                    </p>
+                </div>
             </div>
 
-            <PageHeader
-                title={volunteer.name}
-                subtitle={volunteer.email}
-                icon={<div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">{volunteer.name.substring(0, 2)}</div>}
-            />
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left: Profile Info */}
                 <div className="space-y-6">
-                    <div className="card bg-white p-6">
-                        <h3 className="font-bold text-lg mb-4">Profiel</h3>
-                        <div className="space-y-3 text-sm">
-                            <div className="flex justify-between py-2 border-b border-slate-50">
-                                <span className="text-slate-500">Status</span>
-                                <span>{volunteer.active ? <span className="badge badge-green">Actief</span> : <span className="badge badge-red">Inactief</span>}</span>
+                    <Card className="border-[var(--color-border)]">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <User size={18} className="text-purple-400" /> Profiel
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex justify-between items-center py-2 border-b border-[var(--color-border)]">
+                                <span className="text-[var(--color-text-secondary)] text-sm">Status</span>
+                                <span>{volunteer.active ? <Badge variant="success">Actief</Badge> : <Badge variant="error">Inactief</Badge>}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b border-slate-50">
-                                <span className="text-slate-500">Mag dubbel?</span>
-                                <span>{volunteer.allow_double ? 'Ja' : 'Nee'}</span>
+                            <div className="flex justify-between items-center py-2 border-b border-[var(--color-border)]">
+                                <span className="text-[var(--color-text-secondary)] text-sm">Mag dubbel?</span>
+                                <span>{volunteer.allow_double ? <Badge variant="outline">Ja</Badge> : <span className="text-[var(--color-text-muted)] text-sm">Nee</span>}</span>
                             </div>
-                            <div className="py-2">
-                                <span className="text-slate-500 block mb-1">Notities</span>
-                                <p className="bg-slate-50 p-2 rounded text-slate-700">{volunteer.notes || '-'}</p>
+                            <div className="pt-2">
+                                <span className="text-[var(--color-text-secondary)] text-sm block mb-1.5 flex items-center gap-1"><FileText size={14} /> Notities</span>
+                                <div className="bg-[var(--color-bg-app)] p-3 rounded-lg text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] min-h-[60px]">
+                                    {volunteer.notes || <span className="text-[var(--color-text-muted)] italic">Geen notities</span>}
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* Right: Notifications Tab */}
                 <div className="lg:col-span-2">
-                    <div className="card bg-white p-6">
-                        <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-                            <Mail size={20} className="text-slate-400" /> Notificatie Logboek
-                        </h3>
+                    <Card className="border-[var(--color-border)] h-full">
+                        <CardHeader className="pb-4 border-b border-[var(--color-border)]">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <Mail size={18} className="text-purple-400" /> Notificatie Logboek
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            {logs.length === 0 ? (
+                                <div className="text-center py-12 text-[var(--color-text-muted)]">
+                                    Nog geen notificaties verstuurd.
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-[var(--color-border)]">
+                                    {logs.map(log => (
+                                        <div key={log.id} className="p-4 hover:bg-[var(--color-bg-app)] transition-colors group">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    {log.status === 'sent' && <div className="text-green-500"><CheckCircle size={18} /></div>}
+                                                    {log.status === 'failed' && <div className="text-red-500"><XCircle size={18} /></div>}
+                                                    {log.status === 'skipped' && <div className="text-yellow-500"><AlertTriangle size={18} /></div>}
 
-                        {logs.length === 0 ? (
-                            <div className="text-center py-12 text-slate-400">
-                                Nog geen notificaties verstuurd.
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {logs.map(log => (
-                                    <div key={log.id} className="border border-slate-200 rounded-lg p-4 hover:border-primary-200 transition-colors">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div className="flex items-center gap-2">
-                                                {log.status === 'sent' && <CheckCircle size={16} className="text-green-500" />}
-                                                {log.status === 'failed' && <XCircle size={16} className="text-red-500" />}
-                                                {log.status === 'skipped' && <AlertTriangle size={16} className="text-yellow-500" />}
-                                                <span className="font-medium text-slate-900">{log.subject}</span>
+                                                    <div>
+                                                        <h4 className="font-medium text-[var(--color-text-primary)] text-sm">{log.subject}</h4>
+                                                        <div className="flex items-center gap-2 mt-0.5">
+                                                            <Badge variant={log.status === 'sent' ? 'success' : log.status === 'failed' ? 'error' : 'warning'} className="text-[10px] px-1.5 py-0 h-5">
+                                                                {log.status.toUpperCase()}
+                                                            </Badge>
+                                                            {log.error && (
+                                                                <span className="text-red-400 text-xs truncate max-w-[200px]">{log.error}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span className="text-xs text-[var(--color-text-muted)] whitespace-nowrap">
+                                                    {new Date(log.sent_at).toLocaleString('nl-NL')}
+                                                </span>
                                             </div>
-                                            <span className="text-xs text-slate-400">
-                                                {new Date(log.sent_at).toLocaleString('nl-NL')}
-                                            </span>
+
+                                            <div className="mt-3 pl-8">
+                                                <details className="group/details">
+                                                    <summary className="text-xs text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-text-primary)] flex items-center gap-1 select-none">
+                                                        <span className="group-open/details:hidden">Toon inhoud</span>
+                                                        <span className="hidden group-open/details:inline">Verberg inhoud</span>
+                                                    </summary>
+                                                    <div className="mt-2 p-3 bg-[var(--color-bg-app)] rounded-lg text-xs font-mono whitespace-pre-wrap border border-[var(--color-border)] text-[var(--color-text-primary)] shadow-inner">
+                                                        {log.body_text}
+                                                    </div>
+                                                </details>
+                                            </div>
                                         </div>
-
-                                        <div className="text-sm text-slate-600 mb-2">
-                                            {/* Simple summary or preview */}
-                                            <span className={`badge ${log.status === 'sent' ? 'badge-green' :
-                                                    log.status === 'failed' ? 'badge-red' : 'badge-yellow'
-                                                }`}>
-                                                {log.status.toUpperCase()}
-                                            </span>
-                                        </div>
-
-                                        {log.error && (
-                                            <div className="bg-red-50 text-red-700 text-xs p-2 rounded mb-2 font-mono">
-                                                {log.error}
-                                            </div>
-                                        )}
-
-                                        <details className="text-xs text-slate-500 cursor-pointer">
-                                            <summary className="hover:text-primary-600">Toon email inhoud</summary>
-                                            <div className="mt-2 p-3 bg-slate-50 rounded font-mono whitespace-pre-wrap border border-slate-200">
-                                                {log.body_text}
-                                            </div>
-                                        </details>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>

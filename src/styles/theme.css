@@ -1,0 +1,65 @@
+:root {
+  /* 
+   * COLOR PALETTE 
+   * Based on BNWV Junior AI Studio reference
+   */
+
+  /* Backgrounds */
+  --color-bg-app: #0B1220;    /* Deep Navy */
+  --color-bg-surface: #162235; /* Dark Blue Grey */
+  --color-bg-surface-hover: #1E2D45;
+  
+  /* Text */
+  --color-text-primary: #EAF0FF; /* Paper White */
+  --color-text-secondary: #9AA8C7; /* Muted Slate */
+  --color-text-muted: #64748B; 
+
+  /* Borders */
+  --color-border: rgba(148, 163, 184, 0.18);
+  --color-border-hover: rgba(148, 163, 184, 0.35);
+  --color-border-active: rgba(168, 85, 247, 0.5); /* Purple hint */
+
+  /* Accents - Primary (Electric Purple) */
+  --color-primary-start: #7C3AED;
+  --color-primary-end: #A855F7;
+  --color-primary-glow: rgba(124, 58, 237, 0.4);
+
+  /* Accents - Secondary CTA (Warm Orange) */
+  --color-accent-start: #F59E0B;
+  --color-accent-end: #FB923C;
+  --color-accent-glow: rgba(245, 158, 11, 0.4);
+
+  /* Semantic */
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --color-warning: #F59E0B;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-glow-purple: 0 0 15px var(--color-primary-glow);
+  --shadow-glow-orange: 0 0 15px var(--color-accent-glow);
+  --shadow-floating: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+body {
+    background-color: var(--color-bg-app);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    background-image: radial-gradient(circle at 50% 0%, #172033 0%, var(--color-bg-app) 60%);
+    min-height: 100vh;
+}

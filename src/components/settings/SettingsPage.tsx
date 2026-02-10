@@ -1,9 +1,10 @@
-
-import { Settings } from 'lucide-react'
+import { Save, RefreshCw, Mail } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { AppSettings } from '../../types'
-import PageHeader from '../common/PageHeader'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card'
+import { Button } from '../ui/Button'
+import { Input } from '../ui/Input'
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true)
@@ -74,143 +75,140 @@ export default function SettingsPage() {
         setPreview({ subject: sub, body })
     }
 
-    if (loading) return <div>Laden...</div>
+    if (loading) return (
+        <div className="flex items-center justify-center p-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary-end)]"></div>
+        </div>
+    )
 
     return (
-        <div>
-            <PageHeader
-                title="Instellingen"
-                subtitle="Beheer e-mail templates en algemene configuratie"
-                icon={<Settings size={24} />}
-            />
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-3xl font-bold mb-1">Instellingen</h1>
+                <p className="text-[var(--color-text-secondary)]">Beheer e-mail templates en algemene configuratie.</p>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* LEFT: Configuration Form */}
                 <div className="space-y-6">
 
-                    <div className="card bg-white p-6">
-                        <h3 className="font-bold text-lg mb-4">Algemeen & Admin</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Naam Admin</label>
-                                <input
-                                    type="text"
-                                    value={formData.admin_name}
-                                    onChange={e => setFormData({ ...formData, admin_name: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Email Admin (Login)</label>
-                                <input
-                                    type="text"
-                                    value={formData.admin_email}
-                                    onChange={e => setFormData({ ...formData, admin_email: e.target.value })}
-                                />
-                                <p className="text-xs text-slate-400 mt-1">Let op: dit wijzigt wie toegang heeft!</p>
-                            </div>
-                        </div>
-                    </div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Algemeen & Admin</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Input
+                                label="Naam Admin"
+                                value={formData.admin_name}
+                                onChange={e => setFormData({ ...formData, admin_name: e.target.value })}
+                            />
+                            <Input
+                                label="Email Admin (Login)"
+                                value={formData.admin_email}
+                                onChange={e => setFormData({ ...formData, admin_email: e.target.value })}
+                                helperText="Let op: dit wijzigt wie toegang heeft!"
+                            />
+                        </CardContent>
+                    </Card>
 
-                    <div className="card bg-white p-6">
-                        <h3 className="font-bold text-lg mb-4">E-mail Notificaties</h3>
-
-                        <div className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>E-mail Notificaties</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">CC Email 1</label>
-                                    <input
-                                        type="text"
-                                        value={formData.cc_email_1}
-                                        onChange={e => setFormData({ ...formData, cc_email_1: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">CC Email 2</label>
-                                    <input
-                                        type="text"
-                                        value={formData.cc_email_2}
-                                        onChange={e => setFormData({ ...formData, cc_email_2: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Onderwerp Template</label>
-                                <input
-                                    type="text"
-                                    value={formData.subject_template}
-                                    onChange={e => setFormData({ ...formData, subject_template: e.target.value })}
+                                <Input
+                                    label="CC Email 1"
+                                    value={formData.cc_email_1}
+                                    onChange={e => setFormData({ ...formData, cc_email_1: e.target.value })}
+                                />
+                                <Input
+                                    label="CC Email 2"
+                                    value={formData.cc_email_2}
+                                    onChange={e => setFormData({ ...formData, cc_email_2: e.target.value })}
                                 />
                             </div>
 
+                            <Input
+                                label="Onderwerp Template"
+                                value={formData.subject_template}
+                                onChange={e => setFormData({ ...formData, subject_template: e.target.value })}
+                            />
+
                             <div>
-                                <label className="block text-sm font-medium mb-1">Bericht Template (Plain Text)</label>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-text-secondary)]">Bericht Template (Plain Text)</label>
                                 <textarea
                                     rows={8}
-                                    className="font-mono text-sm"
+                                    className="w-full bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl px-4 py-3 font-mono text-sm focus:outline-none focus:border-[var(--color-primary-end)] transition-colors"
                                     value={formData.text_template}
                                     onChange={e => setFormData({ ...formData, text_template: e.target.value })}
                                 />
-                                <div className="mt-2 text-xs text-slate-500">
-                                    Beschikbare tags: {'{SALUTATION}, {DATE}, {ROLE}, {TIME_START}, {TIME_END}'}
+                                <div className="mt-2 text-xs text-[var(--color-text-muted)] p-2 bg-white/5 rounded-lg border border-[var(--color-border)]">
+                                    <span className="font-semibold block mb-1">Beschikbare tags:</span>
+                                    {'{SALUTATION}, {DATE}, {ROLE}, {TIME_START}, {TIME_END}'}
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
 
-                    <div className="card bg-white p-6 border-l-4 border-indigo-500">
-                        <h3 className="font-bold text-lg mb-4 text-indigo-900">Test Herinneringen</h3>
-                        <p className="text-sm text-slate-600 mb-4">
-                            Stuur handmatig de herinneringsmails voor een specifieke ophaaldatum.
-                            Gebruik dit om te testen of de templates goed werken.
-                            <br /><span className="font-bold text-green-600">✅ VEILIG: Test-mails worden alleen naar het admin-adres gestuurd.</span>
-                        </p>
+                    <Card className="border-indigo-500/30 bg-indigo-500/5">
+                        <CardHeader>
+                            <CardTitle className="text-indigo-400">Test Herinneringen</CardTitle>
+                            <CardDescription>Stuur handmatig de herinneringsmails voor een datum.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex gap-4 items-end">
+                                <div className="flex-1">
+                                    <label className="block text-sm font-medium mb-1.5 text-[var(--color-text-secondary)]">Selecteer Ophaaldatum</label>
+                                    <input
+                                        type="date"
+                                        className="w-full bg-[var(--color-bg-app)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[var(--color-primary-end)] transition-colors"
+                                        id="testDate"
+                                    />
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    onClick={async () => {
+                                        const dateEl = document.getElementById('testDate') as HTMLInputElement
+                                        if (!dateEl.value) return alert('Kies eerst een datum')
 
-                        <div className="flex gap-4 items-end">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Selecteer Ophaaldatum</label>
-                                <input
-                                    type="date"
-                                    className="input-field"
-                                    id="testDate"
-                                />
+                                        if (!confirm(`Weet je zeker dat je mails wilt sturen voor ${dateEl.value}?`)) return;
+
+                                        try {
+                                            const res = await fetch(`/.netlify/functions/scheduled-reminder?date=${dateEl.value}`)
+                                            const txt = await res.text()
+                                            alert('Resultaat: ' + txt)
+                                        } catch (err: any) {
+                                            alert('Fout tijdens versturen: ' + err.message)
+                                        }
+                                    }}
+                                >
+                                    Verstuur Nu
+                                </Button>
                             </div>
-                            <button
-                                onClick={async () => {
-                                    const dateEl = document.getElementById('testDate') as HTMLInputElement
-                                    if (!dateEl.value) return alert('Kies eerst een datum')
+                            <p className="text-xs text-green-400 mt-3 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                Test-mails worden alleen naar het admin-adres gestuurd.
+                            </p>
+                        </CardContent>
+                    </Card>
 
-                                    if (!confirm(`Weet je zeker dat je mails wilt sturen voor ${dateEl.value}?`)) return;
-
-                                    try {
-                                        const res = await fetch(`/.netlify/functions/scheduled-reminder?date=${dateEl.value}`)
-                                        const txt = await res.text()
-                                        alert('Resultaat: ' + txt)
-                                    } catch (err: any) {
-                                        alert('Fout tijdens versturen: ' + err.message)
-                                    }
-                                }}
-                                className="btn bg-indigo-600 hover:bg-indigo-700 text-white"
-                            >
-                                Verstuur Nu
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <button
+                    <div className="flex gap-4 pt-4">
+                        <Button
                             onClick={handleSave}
-                            disabled={saving}
-                            className="btn btn-primary"
+                            loading={saving}
+                            variant="primary"
+                            icon={<Save size={18} />}
                         >
                             {saving ? 'Opslaan...' : 'Wijzigingen Opslaan'}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={handlePreview}
-                            className="btn btn-secondary"
+                            variant="secondary"
+                            icon={<RefreshCw size={18} />}
                         >
                             Update Preview
-                        </button>
+                        </Button>
                     </div>
 
                 </div>
@@ -218,25 +216,31 @@ export default function SettingsPage() {
                 {/* RIGHT: Preview */}
                 <div>
                     {preview ? (
-                        <div className="sticky top-8">
-                            <h3 className="font-bold text-lg mb-4 text-slate-500 uppercase text-xs tracking-wider">Preview</h3>
-                            <div className="card bg-white p-0 overflow-hidden border-2 border-slate-100">
-                                <div className="bg-slate-50 p-4 border-b border-slate-100">
-                                    <div className="text-sm font-bold text-slate-700">{preview.subject}</div>
-                                    <div className="text-xs text-slate-400 mt-1">Aan: Jan de Vries &lt;jan@example.com&gt;</div>
+                        <div className="sticky top-24">
+                            <h3 className="font-bold text-lg mb-4 text-[var(--color-text-secondary)] uppercase text-xs tracking-wider">Preview</h3>
+                            <Card className="overflow-hidden bg-[#ffffff] text-slate-900 border-none">
+                                <div className="bg-slate-50 p-4 border-b border-slate-200">
+                                    <div className="text-sm font-bold text-slate-800">{preview.subject}</div>
+                                    <div className="text-xs text-slate-500 mt-1 flex items-center gap-2">
+                                        <Mail size={12} />
+                                        Aan: Jan de Vries &lt;jan@example.com&gt;
+                                    </div>
                                 </div>
-                                <div className="p-6 whitespace-pre-wrap font-sans text-sm text-slate-700 leading-relaxed">
+                                <div className="p-8 whitespace-pre-wrap font-sans text-sm text-slate-700 leading-relaxed max-w-none prose prose-sm">
                                     {preview.body}
                                 </div>
-                            </div>
-                            <p className="text-center mt-4 text-xs text-slate-400">
+                            </Card>
+                            <p className="text-center mt-4 text-xs text-[var(--color-text-muted)]">
                                 Dit is een voorbeeld van hoe de mail eruit ziet voor een vrijwilliger.
                             </p>
                         </div>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-xl p-12">
-                            Klik op "Update Preview" om het resultaat te zien.
-                        </div>
+                        <Card className="h-full min-h-[400px] flex flex-col items-center justify-center text-[var(--color-text-muted)] border-dashed bg-transparent">
+                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                                <RefreshCw size={24} className="opacity-50" />
+                            </div>
+                            <p>Klik op "Update Preview" om het resultaat te zien.</p>
+                        </Card>
                     )}
                 </div>
 

@@ -1,9 +1,11 @@
-
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { LayoutTemplate } from 'lucide-react'
+import { LayoutDashboard, Mail, ArrowRight } from 'lucide-react'
 import { useAuth } from './AuthContext'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/Card'
+import { Input } from '../ui/Input'
+import { Button } from '../ui/Button'
 
 export default function Login() {
     const navigate = useNavigate()
@@ -23,10 +25,6 @@ export default function Login() {
         setLoading(true)
         setMessage('')
 
-
-        // In strict mode, we might want to check if email is the admin email locally too, 
-        // but the backend sends the magic link anyway.
-
         const { error } = await supabase.auth.signInWithOtp({
             email,
             options: {
@@ -43,38 +41,61 @@ export default function Login() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-app">
-            <div className="card w-full max-w-md p-8">
-                <div className="flex flex-col items-center mb-8">
-                    <div className="p-3 bg-primary-100 rounded-full mb-4">
-                        <LayoutTemplate size={32} className="text-primary-600" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-center">Oud Papier Planner</h1>
-                    <p className="text-center text-slate-500">Beheerders toegang</p>
-                </div>
+        <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden bg-[var(--color-bg-app)]">
+            {/* Background effects */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 blur-[100px]"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-orange-500/10 blur-[100px]"></div>
+            </div>
 
-                <form onSubmit={handleLogin} className="flex flex-col gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Email adres</label>
-                        <input
+            <Card className="w-full max-w-md border-[var(--color-border)] shadow-floating" glass>
+                <CardHeader className="text-center pt-8 pb-2">
+                    <div className="mx-auto w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-purple-900/30">
+                        <LayoutDashboard size={24} className="text-white" />
+                    </div>
+                    <CardTitle className="text-2xl mb-2">Welkom terug</CardTitle>
+                    <CardDescription>
+                        Log in op OPA Junior Studio
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent className="p-8">
+                    <form onSubmit={handleLogin} className="flex flex-col gap-5">
+                        <Input
                             type="email"
                             required
+                            label="Email adres"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="admin@school.nl"
+                            placeholder="naam@school.nl"
+                            icon={<Mail size={16} />}
                         />
-                    </div>
-                    <button type="submit" disabled={loading} className="btn btn-primary w-full">
-                        {loading ? 'Versturen...' : 'Stuur Magic Link'}
-                    </button>
-                </form>
 
-                {message && (
-                    <div className={`mt-4 p-3 rounded-md text-sm text-center ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
-                        {message}
-                    </div>
-                )}
-            </div>
+                        <Button
+                            type="submit"
+                            loading={loading}
+                            variant="primary"
+                            className="w-full mt-2"
+                            icon={!loading && <ArrowRight size={16} />}
+                        >
+                            {loading ? 'Versturen...' : 'Stuur Magic Link'}
+                        </Button>
+                    </form>
+
+                    {message && (
+                        <div className={`mt-6 p-4 rounded-xl text-sm text-center border ${message.includes('Error')
+                            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                            : 'bg-green-500/10 text-green-400 border-green-500/20'
+                            }`}>
+                            {message}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            <p className="mt-8 text-xs text-[var(--color-text-muted)] opacity-50">
+                &copy; {new Date().getFullYear()} OPA Planner
+            </p>
         </div>
     )
 }
