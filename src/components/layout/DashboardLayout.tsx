@@ -7,7 +7,7 @@ import pkg from '../../../package.json'
 
 export default function DashboardLayout() {
     const { session, loading, signOut, user } = useAuth()
-    const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const location = useLocation()
 
     if (loading) return <div className="flex h-screen items-center justify-center text-slate-500">Laden...</div>
@@ -15,12 +15,11 @@ export default function DashboardLayout() {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-        { icon: Calendar, label: 'Roosters', path: '/schedules' }, // Note: Adjusted to plural for convention or specific list
+        { icon: Calendar, label: 'Roosters', path: '/schedules' },
         { icon: Users, label: 'Vrijwilligers', path: '/volunteers' },
         { icon: Settings, label: 'Instellingen', path: '/settings' },
     ]
 
-    // Helper to determine exact or sub-route match
     const isActive = (path: string) => {
         if (path === '/' && location.pathname !== '/') return false
         if (path === '/volunteers' && location.pathname.startsWith('/volunteers')) return true
@@ -29,107 +28,78 @@ export default function DashboardLayout() {
     }
 
     return (
-        <div className="app-shell">
-
-            {/* Mobile Sidebar Overlay */}
-            {sidebarOpen && (
-                <div
-                    className="app-sidebar-overlay lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
-
-            {/* Sidebar */}
-            <aside className={`app-sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <div className="flex flex-col h-full">
-                    {/* Logo Box - Clean, no background box */}
-                    <div className="h-16 flex items-center px-6 flex-shrink-0 mb-6">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-[#6ee7b7] rounded-lg flex items-center justify-center text-[#064e3b] shadow-sm">
-                                <LayoutDashboard size={18} />
-                            </div>
-                            <span className="font-bold text-lg tracking-tight text-white">OPA Planner</span>
+        <div className="min-h-screen bg-[var(--color-bg-app)] text-[var(--color-text-primary)] flex flex-col">
+            {/* Topbar */}
+            <header className="sticky top-0 z-50 w-full border-b border-[var(--color-border)] bg-[var(--color-bg-app)]/80 backdrop-blur-md">
+                <div className="container h-16 flex items-center justify-between py-3">
+                    {/* Brand */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center shadow-lg shadow-purple-900/20">
+                            <LayoutDashboard size={18} className="text-white" />
                         </div>
+                        <span className="font-bold text-lg tracking-tight text-white hidden sm:block">
+                            OPA Junior <span className="text-[var(--color-primary-end)]">Studio</span>
+                        </span>
                     </div>
 
-                    {/* Nav - Minimalist List */}
-                    <nav className="flex-1 px-4 overflow-y-auto">
-                        <ul className="space-y-1 list-none p-0 m-0">
-                            {navItems.map((item) => {
-                                const active = isActive(item.path)
-
-                                // Clean style: Text color change + subtle background
-                                const activeClass = active
-                                    ? 'bg-white/10 text-white'
-                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-
-                                const iconColor = active ? '#6ee7b7' : 'currentColor'
-
-                                return (
-                                    <li key={item.path}>
-                                        <Link
-                                            to={item.path}
-                                            onClick={() => setSidebarOpen(false)}
-                                            className={`
-                                                flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
-                                                ${activeClass}
-                                            `}
-                                        >
-                                            <item.icon size={20} style={{ color: iconColor }} />
-                                            <span>{item.label}</span>
-                                        </Link>
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    </nav>
-
-                    {/* User Footer - Clean, no borders */}
-                    <div className="p-4 mt-auto flex-shrink-0">
-                        <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
-                            <div className="w-8 h-8 rounded-full bg-[#10b981] flex items-center justify-center text-white font-bold text-xs shadow-sm group-hover:ring-2 ring-white/20">
+                    {/* User Actions */}
+                    <div className="flex items-center gap-4">
+                        <div className="hidden md:flex items-center gap-3 text-sm text-[var(--color-text-secondary)]">
+                            <div className="w-8 h-8 rounded-full bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex items-center justify-center font-bold text-[var(--color-primary-end)]">
                                 {user?.email?.substring(0, 2).toUpperCase()}
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white truncate">Admin</p>
-                                <p className="text-xs text-slate-400 truncate">{user?.email}</p>
-                            </div>
-                            <button
-                                onClick={() => signOut()}
-                                className="text-slate-500 hover:text-white p-1 transition-colors"
-                                title="Uitloggen"
-                            >
-                                <LogOut size={18} />
-                            </button>
+                            <span className="truncate max-w-[150px]">{user?.email}</span>
                         </div>
-                    </div>
-                    {/* Version Footer */}
-                    <div className="px-6 pb-2 text-xs text-slate-500 text-center opacity-60">
-                        v{pkg.version}
+                        
+                        <button 
+                            onClick={() => signOut()}
+                            className="btn btn-secondary text-xs py-2 px-4 h-9 rounded-full hover:bg-white/5 border-[var(--color-border)] hover:border-[var(--color-primary-end)] transition-all"
+                        >
+                            <LogOut size={14} />
+                            <span className="hidden sm:inline">Sign out</span>
+                        </button>
                     </div>
                 </div>
-            </aside>
+
+                {/* Navigation Tabs (Horizontal) */}
+                <div className="border-b border-[var(--color-border)] bg-[var(--color-bg-app)]">
+                    <div className="container">
+                        <nav className="-mb-px flex space-x-6 overflow-x-auto no-scrollbar">
+                            {navItems.map((item) => {
+                                const active = isActive(item.path)
+                                return (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        className={`
+                                            group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 whitespace-nowrap gap-2
+                                            ${active 
+                                                ? 'border-[var(--color-primary-end)] text-[var(--color-primary-end)]' 
+                                                : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-text-secondary)]'
+                                            }
+                                        `}
+                                    >
+                                        <item.icon size={18} className={`transition-colors ${active ? 'text-[var(--color-primary-end)]' : 'group-hover:text-white'}`} />
+                                        {item.label}
+                                    </Link>
+                                )
+                            })}
+                        </nav>
+                    </div>
+                </div>
+            </header>
 
             {/* Main Content */}
-            <div className="app-main">
-                {/* Mobile Header */}
-                <header className="app-mobile-header lg:hidden">
-                    <div className="flex items-center gap-2 font-bold text-slate-800">
-                        <LayoutDashboard className="text-primary-600" size={20} />
-                        <span>OPA Planner</span>
-                    </div>
-                    <button onClick={() => setSidebarOpen(true)} className="p-2 text-slate-600">
-                        <Menu size={24} />
-                    </button>
-                </header>
+            <main className="flex-1 container py-8 animate-fade-in relative z-0">
+                <div className="max-w-6xl mx-auto">
+                    <Outlet />
+                </div>
+            </main>
 
-                {/* Scrollable Content Area */}
-                <main className="app-content-scroll">
-                    <div className="max-w-7xl mx-auto space-y-6">
-                        <Outlet />
-                    </div>
-                </main>
-            </div>
+            {/* Sticky Mobile Nav (Optional / Alternative to top tabs for better mobile UX? 
+                Request says "Mobile: Topbar compact, tabs scrollable". 
+                The top overflow-x-auto nav handles this well.) 
+            */}
         </div>
     )
 }
