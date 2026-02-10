@@ -152,8 +152,8 @@ export default function ScheduleEditor() {
     if (!schedule) return <div>Niet gevonden</div>
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="space-y-8">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-4">
                     <Link to="/" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors">
                         <ArrowLeft size={24} />
@@ -163,7 +163,7 @@ export default function ScheduleEditor() {
                             {schedule.name}
                             {schedule.is_active && <Badge variant="success">Actief</Badge>}
                         </h1>
-                        <p className="text-[var(--color-text-secondary)] text-sm flex items-center gap-2">
+                        <p className="text-[var(--color-text-secondary)] text-sm flex items-center gap-2 mt-1">
                             {saving ? <span className="flex items-center gap-1 text-yellow-500"><Save size={12} /> Opslaan...</span> : <span className="flex items-center gap-1 text-green-500"><CheckCircle size={12} /> Opgeslagen</span>}
                             <span className="text-[var(--color-text-muted)]">•</span>
                             {dates.length} inzameldagen
@@ -185,26 +185,26 @@ export default function ScheduleEditor() {
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-6 items-start">
-                {/* LEFT: Editor */}
-                <div className="flex-1 w-full space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                {/* LEFT: Editor (2/3) */}
+                <div className="lg:col-span-2 space-y-6">
                     {dates.map((date) => {
                         const warnings = getValidation(date)
                         const hasWarnings = warnings.length > 0
 
                         return (
                             <Card key={date.id} className={clsx(
-                                "border-l-4 transition-all duration-300",
+                                "border-l-4 transition-all duration-300 hover:shadow-md",
                                 hasWarnings ? "border-l-yellow-500 shadow-yellow-500/5" : "border-l-green-500"
                             )}>
-                                <CardContent className="p-5">
-                                    <div className="flex flex-col md:flex-row justify-between mb-4 pb-2 border-b border-[var(--color-border)]">
+                                <CardContent className="p-6">
+                                    <div className="flex flex-col md:flex-row justify-between mb-6 pb-4 border-b border-[var(--color-border)]">
                                         <h3 className="font-bold text-lg flex items-center gap-2 text-[var(--color-text-primary)]">
                                             <Calendar size={18} className="text-[var(--color-text-muted)]" />
                                             {new Date(date.date).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
                                         </h3>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 mt-2 md:mt-0">
                                             {date.reminder_sent_at && (
                                                 <Badge variant="success" className="gap-1 px-2 py-0.5"><CheckCircle size={12} /> Herinnering</Badge>
                                             )}
@@ -220,16 +220,16 @@ export default function ScheduleEditor() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                         {['V1', 'V2', 'L1', 'L2', 'R1', 'R2'].map((role) => {
                                             const assignment = date.assignments.find(a => a.role === role)
                                             return (
-                                                <div key={role} className="flex flex-col gap-1.5">
+                                                <div key={role} className="flex flex-col gap-2">
                                                     <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider pl-1">{role}</span>
                                                     {assignment && (
-                                                        <div className="relative">
+                                                        <div className="relative group">
                                                             <select
-                                                                className="w-full bg-[var(--color-bg-app)] text-[var(--color-text-primary)] text-sm p-2.5 rounded-lg border border-[var(--color-border)] focus:border-[var(--color-primary-end)] focus:ring-1 focus:ring-[var(--color-primary-end)] outline-none appearance-none transition-colors cursor-pointer hover:border-[var(--color-border-hover)]"
+                                                                className="w-full bg-[var(--color-bg-app)] text-[var(--color-text-primary)] text-sm p-3 rounded-lg border border-[var(--color-border)] focus:border-[var(--color-primary-end)] focus:ring-1 focus:ring-[var(--color-primary-end)] outline-none appearance-none transition-colors cursor-pointer hover:border-[var(--color-border-hover)]"
                                                                 value={assignment.volunteer_id || 'null'}
                                                                 onChange={(e) => handleAssignmentChange(assignment.id, e.target.value)}
                                                             >
@@ -240,7 +240,6 @@ export default function ScheduleEditor() {
                                                                     </option>
                                                                 ))}
                                                             </select>
-                                                            {/* Custom arrow could go here */}
                                                         </div>
                                                     )}
                                                 </div>
@@ -253,32 +252,41 @@ export default function ScheduleEditor() {
                     })}
                 </div>
 
-                {/* RIGHT: Fairness Dashboard */}
-                <div className="w-full lg:w-80 shrink-0 sticky top-24">
-                    <Card className="max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar border-[var(--color-border)]">
-                        <CardHeader className="pb-2">
+                {/* RIGHT: Fairness Dashboard (1/3) */}
+                <div className="lg:col-span-1 sticky top-24">
+                    <Card className="max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar border-[var(--color-border)] shadow-lg">
+                        <CardHeader className="pb-4 border-b border-[var(--color-border)] mb-4">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <BarChart3 size={18} className="text-purple-400" /> Statistieken
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-6">
                             {/* Metrics Summary */}
-                            <div className="bg-[var(--color-bg-app)] p-3 rounded-lg text-xs text-[var(--color-text-secondary)] space-y-2 border border-[var(--color-border)]">
+                            <div className="bg-[var(--color-bg-app)] p-4 rounded-xl text-xs text-[var(--color-text-secondary)] space-y-3 border border-[var(--color-border)]">
                                 <div className="flex justify-between items-center">
                                     <span>Max-Min Load:</span>
-                                    <span className="font-mono font-bold text-[var(--color-text-primary)] bg-[var(--color-bg-surface)] px-1.5 py-0.5 rounded">
+                                    <span className={clsx(
+                                        "font-mono font-bold px-2 py-1 rounded",
+                                        (Math.max(...Object.values(stats).map(s => s.weight)) - Math.min(...Object.values(stats).map(s => s.weight))) > 2
+                                            ? "bg-red-500/20 text-red-200"
+                                            : "bg-[var(--color-bg-surface)] text-[var(--color-text-primary)]"
+                                    )}>
                                         {(Math.max(...Object.values(stats).map(s => s.weight)) - Math.min(...Object.values(stats).map(s => s.weight))).toFixed(2)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span>Max-Min Werk:</span>
-                                    <span className="font-mono font-bold text-[var(--color-text-primary)] bg-[var(--color-bg-surface)] px-1.5 py-0.5 rounded">
+                                    <span className="font-mono font-bold text-[var(--color-text-primary)] bg-[var(--color-bg-surface)] px-2 py-1 rounded">
                                         {Math.max(...Object.values(stats).map(s => s.total - (s.roles.R1 + s.roles.R2))) - Math.min(...Object.values(stats).map(s => s.total - (s.roles.R1 + s.roles.R2)))}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="space-y-1">
+                                <div className="flex justify-between text-[10px] text-[var(--color-text-secondary)] px-2 pb-1 uppercase tracking-wider">
+                                    <span>Vrijwilliger</span>
+                                    <span>Load</span>
+                                </div>
                                 {volunteers
                                     .filter(v => stats[v.id]?.total > 0)
                                     .sort((a, b) => (stats[b.id]?.weight || 0) - (stats[a.id]?.weight || 0))
@@ -288,9 +296,9 @@ export default function ScheduleEditor() {
                                             <div key={v.id} className="text-sm border-b border-[var(--color-border)] hover:bg-[var(--color-bg-app)] p-2 rounded transition-colors group">
                                                 <div className="flex justify-between font-medium text-[var(--color-text-primary)]">
                                                     <span>{v.name}</span>
-                                                    <span className={clsx("font-mono text-xs", s.weight > 5 ? "text-purple-400" : "text-[var(--color-text-secondary)]")}>{s.weight.toFixed(2)}</span>
+                                                    <span className={clsx("font-mono text-xs font-bold", s.weight > 5 ? "text-purple-400" : "text-[var(--color-text-secondary)]")}>{s.weight.toFixed(2)}</span>
                                                 </div>
-                                                <div className="flex justify-between text-[10px] text-[var(--color-text-muted)] mt-0.5">
+                                                <div className="flex justify-between text-[10px] text-[var(--color-text-muted)] mt-1 opacity-70 group-hover:opacity-100 transition-opacity">
                                                     <span>Tot: {s.total}</span>
                                                     <span>Res: {s.roles.R1 + s.roles.R2}</span>
                                                 </div>

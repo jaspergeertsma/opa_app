@@ -36,7 +36,7 @@ export default function Dashboard() {
     )
 
     return (
-        <div>
+        <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
                     <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
