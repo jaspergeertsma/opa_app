@@ -120,7 +120,7 @@ export default function VolunteerList() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* List Column */}
                 <div className="lg:col-span-2">
-                    <Card className="overflow-hidden border-[var(--color-border)] bg-[var(--color-bg-surface)]">
+                    <Card className="overflow-hidden border-[var(--color-border)] bg-[var(--color-bg-surface)] p-0">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-[var(--color-bg-app)] text-[var(--color-text-secondary)] uppercase text-xs font-semibold tracking-wider">

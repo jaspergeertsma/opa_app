@@ -150,7 +150,7 @@ export default function DashboardLayout() {
 
             {/* Main Content */}
             <main className="flex-1 container py-8 animate-fade-in relative z-0">
-                <div className="max-w-6xl mx-auto px-4 sm:px-0">
+                <div className="max-w-7xl mx-auto px-4 sm:px-0">
                     <Outlet />
                 </div>
             </main>
