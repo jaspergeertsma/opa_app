@@ -88,9 +88,9 @@ export default function SettingsPage() {
                 <p className="text-[var(--color-text-secondary)]">Beheer e-mail templates en algemene configuratie.</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* LEFT: Configuration Form */}
-                <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* LEFT: Configuration Form (2/3) */}
+                <div className="lg:col-span-2 space-y-6">
 
                     <Card>
                         <CardHeader>
@@ -116,7 +116,7 @@ export default function SettingsPage() {
                             <CardTitle>E-mail Notificaties</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-5">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Input
                                     label="CC Email 1"
                                     value={formData.cc_email_1}
@@ -157,8 +157,8 @@ export default function SettingsPage() {
                             <CardDescription>Stuur handmatig de herinneringsmails voor een datum.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex gap-4 items-end">
-                                <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row gap-4 items-end">
+                                <div className="flex-1 w-full">
                                     <label className="block text-sm font-medium mb-1.5 text-[var(--color-text-secondary)]">Selecteer Ophaaldatum</label>
                                     <input
                                         type="date"
@@ -213,8 +213,8 @@ export default function SettingsPage() {
 
                 </div>
 
-                {/* RIGHT: Preview */}
-                <div>
+                {/* RIGHT: Preview (1/3) */}
+                <div className="lg:col-span-1">
                     {preview ? (
                         <div className="sticky top-24">
                             <h3 className="font-bold text-lg mb-4 text-[var(--color-text-secondary)] uppercase text-xs tracking-wider">Preview</h3>
