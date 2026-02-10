@@ -57,6 +57,11 @@ export default function Login() {
                     <CardDescription>
                         Log in op OPA Junior Studio
                     </CardDescription>
+                    {(import.meta.env.VITE_USE_MOCK === 'true' || !import.meta.env.VITE_SUPABASE_URL) && (
+                        <div className="mt-2 text-xs font-mono bg-amber-500/10 text-amber-500 p-2 rounded border border-amber-500/20">
+                            ⚠️ MOCK MODE ACTIVATED
+                        </div>
+                    )}
                 </CardHeader>
 
                 <CardContent className="p-8">

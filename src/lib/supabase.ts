@@ -7,6 +7,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 const useMock = !supabaseUrl || import.meta.env.VITE_USE_MOCK === 'true'
 
+export const isMock = useMock
 export const supabase = useMock
     ? createMockClient() as any
     : createClient(supabaseUrl || '', supabaseAnonKey || '')
