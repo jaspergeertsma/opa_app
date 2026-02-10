@@ -1,13 +1,12 @@
 
-import { LayoutDashboard, Calendar, Users, Settings, LogOut, Menu } from 'lucide-react'
-import { useState } from 'react'
+import { LayoutDashboard, Calendar, Users, Settings, LogOut } from 'lucide-react'
+
 import { Link, useLocation, Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import pkg from '../../../package.json'
+
 
 export default function DashboardLayout() {
     const { session, loading, signOut, user } = useAuth()
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const location = useLocation()
 
     if (loading) return <div className="flex h-screen items-center justify-center text-slate-500">Laden...</div>
@@ -50,8 +49,8 @@ export default function DashboardLayout() {
                             </div>
                             <span className="truncate max-w-[150px]">{user?.email}</span>
                         </div>
-                        
-                        <button 
+
+                        <button
                             onClick={() => signOut()}
                             className="btn btn-secondary text-xs py-2 px-4 h-9 rounded-full hover:bg-white/5 border-[var(--color-border)] hover:border-[var(--color-primary-end)] transition-all"
                         >
@@ -73,8 +72,8 @@ export default function DashboardLayout() {
                                         to={item.path}
                                         className={`
                                             group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 whitespace-nowrap gap-2
-                                            ${active 
-                                                ? 'border-[var(--color-primary-end)] text-[var(--color-primary-end)]' 
+                                            ${active
+                                                ? 'border-[var(--color-primary-end)] text-[var(--color-primary-end)]'
                                                 : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-text-secondary)]'
                                             }
                                         `}
