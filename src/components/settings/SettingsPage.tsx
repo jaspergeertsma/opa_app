@@ -82,7 +82,7 @@ export default function SettingsPage() {
     )
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             <div>
                 <h1 className="text-3xl font-bold mb-1">Instellingen</h1>
                 <p className="text-[var(--color-text-secondary)]">Beheer e-mail templates en algemene configuratie.</p>
