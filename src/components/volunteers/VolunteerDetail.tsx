@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { Volunteer, NotificationLog } from '../../types'
-import { Mail, ArrowLeft, CheckCircle, XCircle, AlertTriangle, User, Calendar, FileText } from 'lucide-react'
+import { Mail, ArrowLeft, CheckCircle, XCircle, AlertTriangle, User, FileText } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card'
 import { Badge } from '../ui/Badge'
-import { Button } from '../ui/Button'
-import clsx from 'clsx'
+
 
 export default function VolunteerDetail() {
     const { id } = useParams()
