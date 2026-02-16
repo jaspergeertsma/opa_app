@@ -161,15 +161,15 @@ export default function VolunteerList() {
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <Link to={`/volunteers/${v.id}`}>
-                                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
-                                                            <Eye size={16} />
+                                                        <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-full">
+                                                            <Eye size={20} />
                                                         </Button>
                                                     </Link>
-                                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full text-blue-400 hover:text-blue-300" onClick={() => handleEdit(v)}>
-                                                        <Edit2 size={16} />
+                                                    <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-full text-blue-400 hover:text-blue-300" onClick={() => handleEdit(v)}>
+                                                        <Edit2 size={20} />
                                                     </Button>
-                                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full text-red-400 hover:text-red-300" onClick={() => handleDelete(v.id)}>
-                                                        <Trash2 size={16} />
+                                                    <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-full text-red-400 hover:text-red-300" onClick={() => handleDelete(v.id)}>
+                                                        <Trash2 size={20} />
                                                     </Button>
                                                 </div>
                                             </td>
