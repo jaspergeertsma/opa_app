@@ -176,8 +176,7 @@ export default function SettingsPage() {
 
                                         try {
                                             const { data, error } = await supabase.functions.invoke('scheduled-reminder', {
-                                                method: 'GET',
-                                                queryParams: { date: dateEl.value }
+                                                body: { date: dateEl.value }
                                             })
                                             if (error) throw error;
                                             alert('Resultaat: ' + (data?.message || 'Success'))
