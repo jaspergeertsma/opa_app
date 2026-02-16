@@ -175,11 +175,14 @@ export default function SettingsPage() {
                                         if (!confirm(`Weet je zeker dat je mails wilt sturen voor ${dateEl.value}?`)) return;
 
                                         try {
-                                            const res = await fetch(`/.netlify/functions/scheduled-reminder?date=${dateEl.value}`)
-                                            const txt = await res.text()
-                                            alert('Resultaat: ' + txt)
+                                            const { data, error } = await supabase.functions.invoke('scheduled-reminder', {
+                                                method: 'GET',
+                                                queryParams: { date: dateEl.value }
+                                            })
+                                            if (error) throw error;
+                                            alert('Resultaat: ' + (data?.message || 'Success'))
                                         } catch (err: any) {
-                                            alert('Fout tijdens versturen: ' + err.message)
+                                            alert('Fout tijdens versturen: ' + (err.message || JSON.stringify(err)))
                                         }
                                     }}
                                 >

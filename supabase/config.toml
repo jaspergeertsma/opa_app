@@ -1,0 +1,4 @@
+project_id = "your-project-id"
+
+[functions.scheduled-reminder]
+verify_jwt = false
