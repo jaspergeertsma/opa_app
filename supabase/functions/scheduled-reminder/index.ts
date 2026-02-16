@@ -30,10 +30,21 @@ Deno.serve(async (req) => {
             },
         })
 
-        // Get query params
+        // Get query params or body
         const url = new URL(req.url)
-        const manualTriggerDate = url.searchParams.get('date')
+        let manualTriggerDate = url.searchParams.get('date')
 
+        // If not in query params, try body (POST)
+        if (!manualTriggerDate && req.method === 'POST') {
+            try {
+                const body = await req.json()
+                manualTriggerDate = body.date
+            } catch (e) {
+                // No body or not JSON, ignore
+            }
+        }
+
+        console.log(`Request params: date=${manualTriggerDate}, method=${req.method}`)
         console.log('Running reminder check...', manualTriggerDate ? `(Manual: ${manualTriggerDate})` : '(Scheduled)')
 
         // 1. Determine Target Date
@@ -42,7 +53,13 @@ Deno.serve(async (req) => {
 
         if (manualTriggerDate) {
             targetDateStr = manualTriggerDate
-            targetDate = new Date(manualTriggerDate)
+            // Ensure we handle the date correctly as a local date string
+            const parts = manualTriggerDate.split('-')
+            if (parts.length === 3) {
+                targetDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
+            } else {
+                targetDate = new Date(manualTriggerDate)
+            }
         } else {
             const today = startOfDay(new Date())
             targetDate = nextSaturday(today)
