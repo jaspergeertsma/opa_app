@@ -37,6 +37,26 @@ export default function Login() {
         setLoading(false)
     }
 
+    const handleForgotPassword = async () => {
+        if (!email) {
+            setMessage('Error: Vul eerst je email adres in.')
+            return
+        }
+        setLoading(true)
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin.includes('github.io')
+                ? `${window.location.origin}/opa_app/update-password`
+                : `${window.location.origin}/update-password`,
+        })
+
+        if (error) {
+            setMessage('Error: ' + error.message)
+        } else {
+            setMessage('Reset link is verstuurd naar je email!')
+        }
+        setLoading(false)
+    }
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden bg-[var(--color-bg-app)]">
             {/* Background effects */}
@@ -73,14 +93,25 @@ export default function Login() {
                             icon={<Mail size={16} />}
                         />
 
-                        <Input
-                            type="password"
-                            required
-                            label="Wachtwoord"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                        />
+                        <div className="space-y-1">
+                            <Input
+                                type="password"
+                                required
+                                label="Wachtwoord"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                            />
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={handleForgotPassword}
+                                    className="text-xs text-[var(--color-primary-end)] hover:underline opacity-80"
+                                >
+                                    Wachtwoord vergeten?
+                                </button>
+                            </div>
+                        </div>
 
                         <Button
                             type="submit"

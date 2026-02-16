@@ -9,6 +9,7 @@ import ScheduleEditor from './components/schedule/ScheduleEditor'
 import NewScheduleWizard from './components/schedule/NewScheduleWizard'
 import SettingsPage from './components/settings/SettingsPage'
 import VolunteerDetail from './components/volunteers/VolunteerDetail'
+import UpdatePassword from './components/auth/UpdatePassword'
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/update-password" element={<UpdatePassword />} />
 
                     <Route element={<DashboardLayout />}>
                         <Route path="/" element={<Dashboard />} />
