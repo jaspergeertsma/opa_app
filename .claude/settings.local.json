@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if [ -d \"node_modules/tailwindcss\" ])",
+      "Bash(then echo \"tailwindcss found\")",
+      "Bash(else echo \"tailwindcss NOT found\")",
+      "Bash(fi)",
+      "Bash(npm install:*)",
+      "Bash(where:*)",
+      "Bash(cmd /c \"where node & where npm & where npx\")",
+      "Bash(cmd /c \"where node\")",
+      "Bash(powershell -Command:*)",
+      "Bash(C:devopa_appnode_binnpm.cmd install -D tailwindcss@3 postcss autoprefixer @tailwindcss/typography)",
+      "Bash(cmd /c \"C:\\\\dev\\\\opa_app\\\\node_bin\\\\npm.cmd install -D tailwindcss@3 postcss autoprefixer @tailwindcss/typography\")",
+      "Bash(cmd /c \"cd /d C:\\\\dev\\\\opa_app && C:\\\\dev\\\\opa_app\\\\node_bin\\\\npm.cmd install -D tailwindcss@3 postcss autoprefixer @tailwindcss/typography 2>&1\")",
+      "Bash(C:/dev/opa_app/node_bin/node.exe C:/dev/opa_app/node_bin/node_modules/npm/bin/npm-cli.js install -D tailwindcss@3 postcss autoprefixer @tailwindcss/typography --prefix C:/dev/opa_app)",
+      "Bash(C:/dev/opa_app/node_bin/node.exe C:/dev/opa_app/node_bin/node_modules/npm/bin/npm-cli.js run build --prefix C:/dev/opa_app)",
+      "Bash(PATH=\"C:/dev/opa_app/node_bin:$PATH\" C:/dev/opa_app/node_bin/node.exe C:/dev/opa_app/node_bin/node_modules/npm/bin/npm-cli.js run build:*)",
+      "Bash(cmd /c \"set PATH=C:\\\\dev\\\\opa_app\\\\node_bin;%PATH% && cd /d C:\\\\dev\\\\opa_app && C:\\\\dev\\\\opa_app\\\\node_bin\\\\npm.cmd run build 2>&1\")",
+      "Bash(PATH=\"C:/dev/opa_app/node_bin:$PATH\" node_bin/node.exe node_modules/.bin/tsc:*)",
+      "Bash(PATH=\"C:/dev/opa_app/node_bin:$PATH\" node_bin/node.exe node_modules/typescript/bin/tsc:*)",
+      "Bash(PATH=\"C:/dev/opa_app/node_bin:$PATH\" node_bin/node.exe node_modules/vite/bin/vite.js build:*)",
+      "Bash(PATH=\"C:/dev/opa_app/node_bin:$PATH\" node_bin/node.exe node_modules/vitest/vitest.mjs run:*)",
+      "Bash(PATH=\"C:/dev/opa_app/node_bin:$PATH\" node_bin/node.exe node_modules/vite/bin/vite.js:*)"
+    ]
+  }
+}
