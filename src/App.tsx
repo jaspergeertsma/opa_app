@@ -14,7 +14,7 @@ import UpdatePassword from './components/auth/UpdatePassword'
 function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
+            <BrowserRouter basename="/opa_app">
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/update-password" element={<UpdatePassword />} />
