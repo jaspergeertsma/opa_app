@@ -11,6 +11,7 @@ export default function Login() {
     const navigate = useNavigate()
     const { session } = useAuth()
     const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
 
@@ -25,19 +26,13 @@ export default function Login() {
         setLoading(true)
         setMessage('')
 
-        const { error } = await supabase.auth.signInWithOtp({
+        const { error } = await supabase.auth.signInWithPassword({
             email,
-            options: {
-                emailRedirectTo: window.location.origin.includes('github.io')
-                    ? `${window.location.origin}/opa_app/`
-                    : window.location.origin,
-            },
+            password,
         })
 
         if (error) {
             setMessage('Error: ' + error.message)
-        } else {
-            setMessage('Check je email voor de login link!')
         }
         setLoading(false)
     }
@@ -57,7 +52,7 @@ export default function Login() {
                     </div>
                     <CardTitle className="text-2xl mb-2">Welkom terug</CardTitle>
                     <CardDescription>
-                        Log in op OPA Junior Studio
+                        Log in op OPA Planner
                     </CardDescription>
                     {(import.meta.env.VITE_USE_MOCK === 'true' || !import.meta.env.VITE_SUPABASE_URL) && (
                         <div className="mt-2 text-xs font-mono bg-amber-500/10 text-amber-500 p-2 rounded border border-amber-500/20">
@@ -78,6 +73,15 @@ export default function Login() {
                             icon={<Mail size={16} />}
                         />
 
+                        <Input
+                            type="password"
+                            required
+                            label="Wachtwoord"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••••••"
+                        />
+
                         <Button
                             type="submit"
                             loading={loading}
@@ -85,7 +89,7 @@ export default function Login() {
                             className="w-full mt-2"
                             icon={!loading && <ArrowRight size={16} />}
                         >
-                            {loading ? 'Versturen...' : 'Stuur Magic Link'}
+                            {loading ? 'Inloggen...' : 'Inloggen'}
                         </Button>
                     </form>
 
