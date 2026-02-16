@@ -78,7 +78,9 @@ Deno.serve(async (req) => {
 
         if (dError || !dateRows || dateRows.length === 0) {
             console.log('No collection found for date:', targetDateStr)
-            return new Response(JSON.stringify({ message: 'No collection found' }), {
+            return new Response(JSON.stringify({
+                message: `Geen rooster gevonden voor datum: ${targetDateStr}. Controleer of deze datum in je rooster staat.`
+            }), {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                 status: 200,
             })
