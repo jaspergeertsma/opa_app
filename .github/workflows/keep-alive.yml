@@ -1,0 +1,32 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Draait elke dag om 12:00 UTC
+  workflow_dispatch:     # Zorgt ervoor dat de workflow ook handmatig gestart kan worden
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send HTTP GET request to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          # Zorg ervoor dat de URL correct is afgesloten voor de REST API root
+          URL="${SUPABASE_URL}/rest/v1/"
+          
+          echo "Pinging Supabase at $URL..."
+          
+          # Voer de cURL request uit, bewaar de HTTP status code
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X GET -H "apikey: $SUPABASE_ANON_KEY" "$URL")
+          
+          # Controleer of de status code in de 2xx reeks valt
+          if [[ "$HTTP_STATUS" =~ ^2 ]]; then
+            echo "✅ Successfully pinged Supabase (HTTP Status: $HTTP_STATUS)"
+          else
+            echo "❌ Failed to ping Supabase (HTTP Status: $HTTP_STATUS)"
+            exit 1
+          fi
