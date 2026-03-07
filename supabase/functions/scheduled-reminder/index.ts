@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
         const times: Record<string, string> = {
             'V1': '09:00 – 09:45 uur', 'V2': '09:45 – 10:30 uur',
             'L1': '10:30 – 11:15 uur', 'L2': '11:15 – 12:00 uur',
-            'R1': '09:00 – 12:00 uur (Stand-by)', 'R2': '09:00 – 12:00 uur (Stand-by)'
+            'R1': '09:00 – 12:00 uur (Stand-by)', 'R2': '09:00 – 12:00 uur (Reserve)'
         }
 
         const roleOrder = ['V1', 'V2', 'L1', 'L2']
@@ -246,6 +246,83 @@ Deno.serve(async (req) => {
                     status: 'failed',
                     error: sendError.message
                 })
+            }
+        }
+
+        // 5. Send Extra Notification to School
+        if (settings.school_notification_emails) {
+            const schoolEmails = settings.school_notification_emails.split(',').map(e => e.trim()).filter(e => e);
+
+            if (schoolEmails.length > 0) {
+                const rawSubject = settings.school_notification_subject || 'Rooster Oud Papier {DATE}';
+                const rawBody = settings.school_notification_body || '';
+
+                if (rawBody) {
+                    const placeholders: Record<string, string> = {
+                        '{DATE}': format(targetDate, 'd MMMM', { locale: nl }),
+                        '{ALL_SERVICES_LIST}': serviceLines,
+                        '{RESERVES_LIST}': reserveLines || '(Geen reserves ingepland)',
+                        '{ADMIN_NAME}': adminName,
+                        '{ADMIN_EMAIL}': adminEmail
+                    };
+
+                    let subject = rawSubject;
+                    let body = rawBody;
+
+                    Object.entries(placeholders).forEach(([k, v]) => {
+                        subject = subject.replace(new RegExp(k, 'g'), v);
+                        body = body.replace(new RegExp(k, 'g'), v);
+                    });
+
+                    const htmlBody = body.replace(/\n/g, '<br/>');
+
+                    for (const recipientEmail of schoolEmails.slice(0, 3)) { // Max 3
+                        const isTest = !!manualTriggerDate;
+                        const finalRecipient = isTest ? adminEmail : recipientEmail;
+
+                        let finalSubject = subject;
+                        let finalHtmlBody = htmlBody;
+
+                        if (isTest) {
+                            finalSubject = `[TEST] ${subject}`;
+                            finalHtmlBody = `<p style="color: red; font-weight: bold;">⚠️ TEST MODUS: Dit bericht zou verzonden zijn naar SCHOOL/EXTRA (${recipientEmail})</p><hr>${htmlBody}`;
+                        }
+
+                        console.log(`Sending extra notification ${isTest ? 'TEST' : ''} to ${finalRecipient}...`);
+
+                        try {
+                            const info = await transporter.sendMail({
+                                from: `"Oud Papier Planner" <${smtpUser}>`,
+                                to: finalRecipient,
+                                subject: finalSubject,
+                                html: finalHtmlBody,
+                            });
+
+                            sentCount++;
+
+                            await supabaseAdmin.from('notification_logs').insert({
+                                schedule_date_id: schDate.id,
+                                sent_at: new Date().toISOString(),
+                                to_email: recipientEmail,
+                                subject,
+                                body_text: body,
+                                status: 'sent',
+                                provider_message_id: info.messageId
+                            });
+                        } catch (sendError: any) {
+                            console.error(`Failed to send extra notification to ${finalRecipient}:`, sendError);
+                            await supabaseAdmin.from('notification_logs').insert({
+                                schedule_date_id: schDate.id,
+                                sent_at: new Date().toISOString(),
+                                to_email: recipientEmail,
+                                subject,
+                                body_text: body,
+                                status: 'failed',
+                                error: sendError.message
+                            });
+                        }
+                    }
+                }
             }
         }
 

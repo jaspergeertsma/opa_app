@@ -63,4 +63,7 @@ export interface AppSettings {
     subject_template: string
     text_template: string
     timezone: string
+    school_notification_emails?: string
+    school_notification_subject?: string
+    school_notification_body?: string
 }
