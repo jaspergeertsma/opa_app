@@ -120,18 +120,27 @@ export default function ScheduleEditor() {
     const getValidation = (date: ScheduleDate) => {
         const warnings: string[] = []
         const volunteerCounts: Record<string, number> = {}
+        const roleCounts: Record<string, number> = {}
 
-        // Check completeness
-        const assignedCount = date.assignments.filter(a => a.volunteer_id).length
-        if (assignedCount < 6) warnings.push('Niet compleet')
-
-        // Check double
+        // Check completeness & Duplicate Roles (DB corruption)
         date.assignments.forEach(a => {
+            roleCounts[a.role] = (roleCounts[a.role] || 0) + 1
             if (a.volunteer_id) {
                 volunteerCounts[a.volunteer_id] = (volunteerCounts[a.volunteer_id] || 0) + 1
             }
         })
 
+        const assignedCount = date.assignments.filter(a => a.volunteer_id).length
+        if (assignedCount < 6) warnings.push('Niet compleet')
+
+        // Check for duplicate roles (hidden assignments)
+        Object.entries(roleCounts).forEach(([role, count]) => {
+            if (count > 1) {
+                warnings.push(`Dubbel slot: ${role}`)
+            }
+        })
+
+        // Check for double bookings
         Object.entries(volunteerCounts).forEach(([vid, count]) => {
             if (count > 1) {
                 const v = volunteers.find(vol => vol.id === vid)

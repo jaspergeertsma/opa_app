@@ -183,7 +183,7 @@ export default function DashboardLayout() {
 
             {/* Main Content */}
             <main className="flex-1 w-full py-8 animate-fade-in relative z-0">
-                <div className="w-full max-w-[2000px] mx-auto px-4 md:px-8">
+                <div className="container px-4">
                     <Outlet />
                 </div>
             </main>
