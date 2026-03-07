@@ -18,7 +18,10 @@ export default function SettingsPage() {
         cc_email_2: '',
         subject_template: '',
         text_template: '',
-        timezone: 'Europe/Amsterdam'
+        timezone: 'Europe/Amsterdam',
+        school_notification_emails: '',
+        school_notification_subject: '',
+        school_notification_body: ''
     })
 
     useEffect(() => {
@@ -146,6 +149,41 @@ export default function SettingsPage() {
                                 <div className="mt-2 text-xs text-[var(--color-text-muted)] p-2 bg-white/5 rounded-lg border border-[var(--color-border)]">
                                     <span className="font-semibold block mb-1">Beschikbare tags:</span>
                                     {'{SALUTATION}, {DATE}, {ROLE}, {TIME_START}, {TIME_END}'}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Extra Notificatie (School)</CardTitle>
+                            <CardDescription>
+                                Naast de vrijwilligers kan er ook een apart bericht gestuurd worden naar bijvoorbeeld de school met daarin het rooster.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <Input
+                                label="Ontvangers (max 3 e-mailadressen, komma gescheiden)"
+                                value={formData.school_notification_emails || ''}
+                                onChange={e => setFormData({ ...formData, school_notification_emails: e.target.value })}
+                            />
+                            <Input
+                                label="Onderwerp Template"
+                                value={formData.school_notification_subject || ''}
+                                onChange={e => setFormData({ ...formData, school_notification_subject: e.target.value })}
+                            />
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--color-text-secondary)]">Bericht Template</label>
+                                <textarea
+                                    rows={10}
+                                    className="w-full bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl px-4 py-3 font-mono text-sm focus:outline-none focus:border-[var(--color-primary-end)] transition-colors"
+                                    value={formData.school_notification_body || ''}
+                                    onChange={e => setFormData({ ...formData, school_notification_body: e.target.value })}
+                                />
+                                <div className="mt-2 text-xs text-[var(--color-text-muted)] p-2 bg-white/5 rounded-lg border border-[var(--color-border)]">
+                                    <span className="font-semibold block mb-1">Beschikbare tags:</span>
+                                    {'{DATE}, {ALL_SERVICES_LIST}, {RESERVES_LIST}, {ADMIN_NAME}, {ADMIN_EMAIL}'}
                                 </div>
                             </div>
                         </CardContent>

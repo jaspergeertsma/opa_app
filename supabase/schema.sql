@@ -42,7 +42,8 @@ create table public.assignments (
   id uuid default gen_random_uuid() primary key,
   schedule_date_id uuid references public.schedule_dates(id) on delete cascade not null,
   role text check (role in ('V1', 'V2', 'L1', 'L2', 'R1', 'R2')),
-  volunteer_id uuid references public.volunteers(id) on delete set null
+  volunteer_id uuid references public.volunteers(id) on delete set null,
+  unique(schedule_date_id, role)
 );
 
 -- Policies

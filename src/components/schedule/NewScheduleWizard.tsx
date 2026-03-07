@@ -100,21 +100,19 @@ export default function NewScheduleWizard() {
             const result = generateSchedule(validDates, pool)
 
             // 4. Insert Dates
-            // Map temp_id to real database IDs
             const tempIdMap = new Map<string, string>() // temp_id -> db_id
+            const dateRows = []
+            for (const d of result.schedule_dates) {
+                const { data, error } = await supabase
+                    .from('schedule_dates')
+                    .insert({ schedule_id: scheduleId, date: d.date })
+                    .select()
+                    .single()
 
-            const { data: dateRows, error: dError } = await supabase
-                .from('schedule_dates')
-                .insert(result.schedule_dates.map(d => ({ schedule_id: scheduleId, date: d.date })))
-                .select()
-
-            if (dError || !dateRows) throw dError
-
-            // Reconstruct map assuming order is preserved (it usually is in simple inserts, but let's be safe if we had temp IDs)
-            // Since we inserted result.schedule_dates in order, dateRows[i] corresponds to result.schedule_dates[i]
-            result.schedule_dates.forEach((d, i) => {
-                tempIdMap.set(d.temp_id, dateRows[i].id)
-            })
+                if (error || !data) throw error
+                tempIdMap.set(d.temp_id, data.id)
+                dateRows.push(data)
+            }
 
             // 5. Insert Assignments
             const assignmentsToInsert = result.assignments.map(a => ({
